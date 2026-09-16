@@ -1,0 +1,30 @@
+; FontCacheFix - one-time fix of the OWB fontconfig cache checksum
+;
+; Updates the 'checksum' field of the pre-built font cache file so that
+; fontconfig considers it valid and reuses it on the first OWB run after
+; installing the system from the ISO (instead of rescanning all fonts).
+;
+; Requirements:
+;   - a pre-built font cache shipped in PROGDIR:Conf (build it by running
+;     OWB once on the system used to create the ISO, with the fontconfig
+;     version that OWB loads in the ISO)
+;   - this script and the fcachefix binary in PROGDIR:Scripts
+;
+; Usage: run this script once, right after installation:
+;   FontCacheFix
+
+FailAt 21
+
+If NOT EXISTS "PROGDIR:Scripts/fcachefix"
+    Echo "FontCacheFix: fcachefix not found in PROGDIR:Scripts"
+    Quit 21
+EndIf
+
+If NOT EXISTS "PROGDIR:Conf"
+    Echo "FontCacheFix: PROGDIR:Conf not found. Is OWB installed here?"
+    Quit 21
+EndIf
+
+"PROGDIR:Scripts/fcachefix" "PROGDIR:Conf" "Fonts:TrueType"
+
+Quit 0
